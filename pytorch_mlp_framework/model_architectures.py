@@ -435,8 +435,19 @@ class ConvolutionalDimensionalityReductionBlockRes(nn.Module):
                                               kernel_size=self.kernel_size, dilation=self.dilation,
                                               padding=self.padding, stride=1)
 
+
+
+
         self.layer_dict['conv_1'].add_module("BN1", nn.BatchNorm2d(num_features=self.num_filters, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True))
         out = self.layer_dict['conv_1'].forward(out)
+
+        self.layer_dict['conv_2'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, kernel_size=1, bias=self.bias,
+                                                dilation=self.dilation, padding=0, stride=1)
+
+        self.layer_dict['conv_2'].add_module("BN2", nn.BatchNorm2d(num_features=self.num_filters, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True))
+        out = self.layer_dict['conv_2'].forward(out)
+
+
         out = F.leaky_relu(out)
 
         print(out.shape)
@@ -444,7 +455,6 @@ class ConvolutionalDimensionalityReductionBlockRes(nn.Module):
     def forward(self, x):
         initial = x
         out = x
-
         out = self.layer_dict['conv_0'].forward(out)
         out = self.layer_dict['conv_0'].BN0(out)
         out = F.leaky_relu(out)
@@ -453,7 +463,9 @@ class ConvolutionalDimensionalityReductionBlockRes(nn.Module):
 
         out = self.layer_dict['conv_1'].forward(out)
         out = self.layer_dict['conv_1'].BN1(out)
-        out += initial
+        shortcut = self.layer_dict['conv_2'].forward(initial)
+        shortcut_2 = self.layer_dict['conv_2'].BN2(shortcut)
+        out += shortcut_2
         out = F.leaky_relu(out)
 
         return out
