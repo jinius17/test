@@ -462,8 +462,6 @@ class ConvolutionalDimensionalityReductionBlockRes(nn.Module):
 
 
 
-
-
 class ConvolutionalNetwork(nn.Module):
     def __init__(self, input_shape, num_output_classes, num_filters,
                  num_blocks_per_stage, num_stages, use_bias=False, processing_block_type=ConvolutionalProcessingBlock,
