@@ -245,6 +245,7 @@ class ConvolutionalProcessingBlockRes(nn.Module):
 
         return out
 
+
 class ConvolutionalProcessingBlockNorm(nn.Module):
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
         super(ConvolutionalProcessingBlockNorm, self).__init__()
